@@ -3,36 +3,38 @@
 #include "logic.h"
 #include "sdl_utils.h"
 
-extern int sizeX, sizeY;
-extern int Live_Cells;
+#define CELL_WIDTH  (WINDOW_WIDTH / grid_cols)
+#define CELL_HEIGHT (WINDOW_HEIGHT / grid_rows)
 
 int main(int argc, char const *argv[]) {   
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     
-    // Initialize default values
-    sizeX = 20;
-    sizeY = 40;
-    Live_Cells = 0;
-    
-    // Initialize SDL
-    if (!init_sdl(&window, &renderer)) {
-        fprintf(stderr, "SDL initialization failed!\n");
+    // Initialise grid first!
+    if (!init_grid(grid_rows, grid_cols)) {
+        fprintf(stderr, "Grid initialisation failed!\n");
         return 1;
     }
 
-    // Initialize game state
+    // Initialise SDL
+    if (!init_sdl(&window, &renderer)) {
+        fprintf(stderr, "SDL initialization failed!\n");
+        free_grid();  // Clean up if SDL fails
+        return 1;
+    }
+
+    // Initialise game state
     if (!loadState(NULL)) {
-        printf("Failed to load state, using default pattern\n");
-        fill();  // Initialize empty grid
-        test_state();   // Set up default pattern
+        printf("Using default pattern\n");
+        fill();
+        test_state();
     }
 
     // Main game loop
     SDL_Event event;
     int running = 1;
     Uint32 lastUpdate = SDL_GetTicks();
-    const int UPDATE_INTERVAL = 500; // Update every 500ms
+    const int UPDATE_INTERVAL = 5000;
     
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -57,7 +59,10 @@ int main(int argc, char const *argv[]) {
         // Automatic update every UPDATE_INTERVAL milliseconds
         Uint32 currentTime = SDL_GetTicks();
         if (currentTime - lastUpdate >= UPDATE_INTERVAL) {
-            lifeOrDeath();
+            // End simulation if no living cells remain
+            if(lifeOrDeath() == -1){
+                running = 0;
+            }
             lastUpdate = currentTime;
         }
         
@@ -67,25 +72,27 @@ int main(int argc, char const *argv[]) {
         
         // Draw grid lines
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        for (int i = 0; i <= sizeX; i++) {
-            SDL_RenderDrawLine(renderer, 0, i * CELL_SIZE, 
-                             sizeY * CELL_SIZE, i * CELL_SIZE);
+        // Horizontal lines
+        for (int row = 0; row <= grid_rows; row++) {
+            SDL_RenderDrawLine(renderer, 0, row * CELL_HEIGHT, 
+                             WINDOW_WIDTH, row * CELL_HEIGHT);
         }
-        for (int j = 0; j <= sizeY; j++) {
-            SDL_RenderDrawLine(renderer, j * CELL_SIZE, 0, 
-                             j * CELL_SIZE, sizeX * CELL_SIZE);
+        // Vertical lines
+        for (int col = 0; col <= grid_cols; col++) {
+            SDL_RenderDrawLine(renderer, col * CELL_WIDTH, 0, 
+                             col * CELL_WIDTH, WINDOW_HEIGHT);
         }
         
         // Draw cells
-        SDL_SetRenderDrawColor(renderer, 141,85,36, 255);
-        for(int i = 0; i < sizeX; i++) {
-            for(int j = 0; j < sizeY; j++) {
-                if(grid[i][j] == 'O') {
+        SDL_SetRenderDrawColor(renderer, 141, 85, 36, 255);
+        for(int row = 0; row < grid_rows; row++) {
+            for(int col = 0; col < grid_cols; col++) {
+                if(grid[row][col] == 'O') {
                     SDL_Rect cell = {
-                        j * CELL_SIZE + 1,  // +1 for grid line spacing
-                        i * CELL_SIZE + 1,  // +1 for grid line spacing
-                        CELL_SIZE - 2,      // Adjust for grid line spacing
-                        CELL_SIZE - 2       // Adjust for grid line spacing
+                        col * CELL_WIDTH + 1,   // x position
+                        row * CELL_HEIGHT + 1,  // y position
+                        CELL_WIDTH - 2,         // width
+                        CELL_HEIGHT - 2         // height
                     };
                     SDL_RenderFillRect(renderer, &cell);
                 }
@@ -98,5 +105,6 @@ int main(int argc, char const *argv[]) {
     }
     
     cleanup_sdl(window);
+    free_grid();
     return 0;
 }
