@@ -9,8 +9,8 @@ int init_sdl(SDL_Window **window, SDL_Renderer **renderer) {
         "Conway's Game of Life",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
+        ACTUAL_WINDOW_WIDTH,
+        ACTUAL_WINDOW_HEIGHT,
         0
     );
 
@@ -34,4 +34,18 @@ int init_sdl(SDL_Window **window, SDL_Renderer **renderer) {
 void cleanup_sdl(SDL_Window *window) {
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void render_button(SDL_Renderer *renderer, int is_paused){
+    SDL_Rect button = {BUTTON_X, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT};
+    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_RenderFillRect(renderer, &button);
+
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderDrawRect(renderer, &button);
+}
+
+int is_button_clicked(int x, int y){
+    return (x >= BUTTON_X && x <= BUTTON_X + BUTTON_WIDTH &&
+            y >= BUTTON_Y && y <= BUTTON_Y + BUTTON_HEIGHT);
 }

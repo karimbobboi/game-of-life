@@ -34,18 +34,29 @@ int main(int argc, char const *argv[]) {
     SDL_Event event;
     int running = 1;
     Uint32 lastUpdate = SDL_GetTicks();
-    const int UPDATE_INTERVAL = 5000;
+    const int UPDATE_INTERVAL = 1000;
+    int is_paused = 0;
     
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = 0;
             }
+            if(event.type == SDL_MOUSEBUTTONDOWN){
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                if(is_button_clicked(mouse_x, mouse_y)){
+                    is_paused = !is_paused;
+                }
+            }
+
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
                     case SDLK_SPACE:
-                        // Manual advance
-                        lifeOrDeath();
+                        if(!is_paused){
+                            // Manual advance
+                            lifeOrDeath();
+                        }
                         break;
                     case SDLK_r:
                         // Reset to initial state
@@ -58,7 +69,7 @@ int main(int argc, char const *argv[]) {
         
         // Automatic update every UPDATE_INTERVAL milliseconds
         Uint32 currentTime = SDL_GetTicks();
-        if (currentTime - lastUpdate >= UPDATE_INTERVAL) {
+        if (!is_paused && currentTime - lastUpdate >= UPDATE_INTERVAL) {
             // End simulation if no living cells remain
             if(lifeOrDeath() == -1){
                 running = 0;
@@ -99,6 +110,7 @@ int main(int argc, char const *argv[]) {
             }
         }
         
+        render_button(renderer, is_paused); // Draw start/pause button
         SDL_RenderPresent(renderer);
         
         SDL_Delay(16);

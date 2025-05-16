@@ -274,11 +274,11 @@ int lifeOrDeath(){
 // Sets up a default initial pattern for testing
 void test_state() {    
     int glider[5][2] = {
-        {0, 1},
-        {0, 2},
-        {0, 3},
-        {1, 2},
-        {2, 2}
+        {1, 1},  // Top cell
+        {2, 2},  // Middle cell
+        {3, 0},  // Bottom left
+        {3, 1},  // Bottom middle
+        {3, 2}   // Bottom right
     };
 
     live_cells = 5;
