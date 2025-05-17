@@ -2,6 +2,7 @@
 #define SDL_UTILS_H
 
 #include "/opt/homebrew/include/SDL2/SDL.h"
+#include "/opt/homebrew/include/SDL2/SDL_ttf.h"
 
 #define WINDOW_WIDTH 800 
 #define WINDOW_HEIGHT 600
@@ -17,6 +18,11 @@
 // Initialize SDL window and renderer
 int init_sdl(SDL_Window **window, SDL_Renderer **renderer);
 void cleanup_sdl(SDL_Window *window);
+
+// Initialize font
+extern TTF_Font *font;
+int init_ttf(void);
+void cleanup_ttf(void);
 
 void render_button(SDL_Renderer *renderer, int is_paused);
 int is_button_clicked(int x, int y);

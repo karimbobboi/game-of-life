@@ -8,6 +8,7 @@ set(CMAKE_BUILD_TYPE Debug)
 set(SDL2_DIR "/opt/homebrew/lib/cmake/SDL2")
 set(SDL2_INCLUDE_DIRS "/opt/homebrew/include")
 set(SDL2_LIBRARIES "/opt/homebrew/lib/libSDL2.dylib")
+set(SDL2_TTF_LIBRARIES "/opt/homebrew/lib/libSDL2_ttf.dylib")
 
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR})
@@ -18,4 +19,4 @@ add_executable(conway
     sdl_utils.c
 )
 
-target_link_libraries(conway ${SDL2_LIBRARIES})
+target_link_libraries(conway ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES})

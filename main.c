@@ -23,6 +23,15 @@ int main(int argc, char const *argv[]) {
         return 1;
     }
 
+    // Initialise font
+    if (!init_ttf()) {
+        fprintf(stderr, "Font initialization failed!\n");
+        // Clean up if font init fails
+        free_grid(); 
+        cleanup_sdl(window);  
+        return 1;
+    }
+
     // Initialise game state
     if (!loadState(NULL)) {
         printf("Using default pattern\n");
@@ -116,6 +125,8 @@ int main(int argc, char const *argv[]) {
         SDL_Delay(16);
     }
     
+    // Cleanup
+    cleanup_ttf();
     cleanup_sdl(window);
     free_grid();
     return 0;
