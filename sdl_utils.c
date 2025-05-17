@@ -95,3 +95,32 @@ int is_button_clicked(int x, int y){
     return (x >= BUTTON_X && x <= BUTTON_X + BUTTON_WIDTH &&
             y >= BUTTON_Y && y <= BUTTON_Y + BUTTON_HEIGHT);
 }
+
+void render_slider(SDL_Renderer *renderer, int current_interval){
+    // Slider track
+    SDL_Rect track = {SLIDER_X, SLIDER_Y, SLIDER_WIDTH, SLIDER_HEIGHT};
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderFillRect(renderer, &track);
+
+    // Calculate handle position
+    float position = (float) (current_interval - MAX_INTERVAL) / (MIN_INTERVAL - MAX_INTERVAL);
+    int handle_x = SLIDER_X + (SLIDER_WIDTH - SLIDER_HANDLE_WIDTH) * position;
+
+    // Draw handle
+    SDL_Rect handle = {handle_x, SLIDER_Y - 5, SLIDER_HANDLE_WIDTH, SLIDER_HEIGHT + 10};
+    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_RenderFillRect(renderer, &handle);
+}
+
+int is_slider_clicked(int x, int y){
+    return (x >= SLIDER_X && x <= SLIDER_X + SLIDER_WIDTH &&
+            y >= SLIDER_Y - 5 && y <= SLIDER_Y + SLIDER_HEIGHT + 5);
+}
+
+int update_slider_value(int mouse_x){
+    float position = (float)(mouse_x - SLIDER_X) / SLIDER_WIDTH;
+    if (position < 0) position = 0;
+    if (position > 1) position = 1;
+    
+    return MAX_INTERVAL + (MIN_INTERVAL - MAX_INTERVAL) * position;
+}

@@ -43,8 +43,10 @@ int main(int argc, char const *argv[]) {
     SDL_Event event;
     int running = 1;
     Uint32 lastUpdate = SDL_GetTicks();
-    const int UPDATE_INTERVAL = 1000;
     int is_paused = 0;
+
+    int UPDATE_INTERVAL = 1000;
+    int dragging_slider = 0;
     
     while (running) {
         while (SDL_PollEvent(&event)) {
@@ -57,15 +59,27 @@ int main(int argc, char const *argv[]) {
                 if(is_button_clicked(mouse_x, mouse_y)){
                     is_paused = !is_paused;
                 }
+                else if(is_slider_clicked(mouse_x, mouse_y)){
+                    dragging_slider = 1;
+                    UPDATE_INTERVAL = update_slider_value(mouse_x);
+                }
+            }
+
+            if(event.type == SDL_MOUSEBUTTONDOWN){
+                dragging_slider = 0;
+            }
+
+            if (event.type == SDL_MOUSEMOTION && dragging_slider) {
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                UPDATE_INTERVAL = update_slider_value(mouse_x);
             }
 
             if (event.type == SDL_KEYDOWN) {
                 switch (event.key.keysym.sym) {
                     case SDLK_SPACE:
-                        if(!is_paused){
-                            // Manual advance
-                            lifeOrDeath();
-                        }
+                        // Manual advance
+                        lifeOrDeath();
                         break;
                     case SDLK_r:
                         // Reset to initial state
@@ -120,6 +134,7 @@ int main(int argc, char const *argv[]) {
         }
         
         render_button(renderer, is_paused); // Draw start/pause button
+        render_slider(renderer, UPDATE_INTERVAL); // Draw slider
         SDL_RenderPresent(renderer);
         
         SDL_Delay(16);

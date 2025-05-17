@@ -24,6 +24,19 @@ extern TTF_Font *font;
 int init_ttf(void);
 void cleanup_ttf(void);
 
+// Slider
+#define SLIDER_WIDTH 200
+#define SLIDER_HEIGHT 20
+#define SLIDER_X ACTUAL_WINDOW_WIDTH - SLIDER_WIDTH - 10
+#define SLIDER_Y (ACTUAL_WINDOW_HEIGHT - SLIDER_HEIGHT - 30)
+#define SLIDER_HANDLE_WIDTH 20
+#define MIN_INTERVAL 100    // Fastest
+#define MAX_INTERVAL 2000   // Slowest
+void render_slider(SDL_Renderer *renderer, int current_interval);
+int is_slider_clicked(int x, int y);
+int update_slider_value(int mouse_x);
+
+// Start/Stop button
 void render_button(SDL_Renderer *renderer, int is_paused);
 int is_button_clicked(int x, int y);
 
