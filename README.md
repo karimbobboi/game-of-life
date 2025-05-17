@@ -2,7 +2,7 @@
 
 A graphical implementation of Conway's Game of Life. I built it for the COMP1921 programming project while I was studying at the University of Leeds.
 
-![Game Demo](demo.gif)
+<img src="demo.gif" width="400" alt="Game Demo">
 
 Required dependencies:
 - CMake
