@@ -273,19 +273,36 @@ int lifeOrDeath(){
 
 // Sets up a default initial pattern for testing
 void test_state() {    
-    int glider[5][2] = {
-        {1, 1},  // Top cell
-        {2, 2},  // Middle cell
-        {3, 0},  // Bottom left
-        {3, 1},  // Bottom middle
-        {3, 2}   // Bottom right
+    // Gosper's Glider Gun pattern coordinates
+    int gun[][2] = {
+        // Left square
+        {5, 1}, {5, 2}, {6, 1}, {6, 2},
+        
+        // Left pattern
+        {5, 11}, {6, 11}, {7, 11},
+        {4, 12}, {8, 12},
+        {3, 13}, {9, 13},
+        {3, 14}, {9, 14},
+        {6, 15},
+        {4, 16}, {8, 16},
+        {5, 17}, {6, 17}, {7, 17},
+        {6, 18},
+        
+        // Right pattern
+        {3, 21}, {4, 21}, {5, 21},
+        {3, 22}, {4, 22}, {5, 22},
+        {2, 23}, {6, 23},
+        {1, 25}, {2, 25}, {6, 25}, {7, 25},
+        
+        // Right square
+        {3, 35}, {3, 36}, {4, 35}, {4, 36}
     };
 
-    live_cells = 5;
+    live_cells = sizeof(gun) / sizeof(gun[0]);
     
-    for(int i = 0; i < live_cells; i++){
-        block[i].row = glider[i][0];
-        block[i].col = glider[i][1];
+    for(int i = 0; i < live_cells; i++) {
+        block[i].row = gun[i][0];
+        block[i].col = gun[i][1];
         block[i].body = 'O';
         grid[block[i].row][block[i].col] = block[i].body;
     }

@@ -43,7 +43,7 @@ int main(int argc, char const *argv[]) {
     SDL_Event event;
     int running = 1;
     Uint32 lastUpdate = SDL_GetTicks();
-    int is_paused = 0;
+    int is_paused = 1;
 
     int UPDATE_INTERVAL = 1000;
     int dragging_slider = 0;
